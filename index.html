@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vapeamin</title>
+<meta name="description" content="Reaction streaming at maximum volume. YouTube · Twitch · TikTok · Kick · X.">
+<meta property="og:title" content="Vapeamin">
+<meta property="og:description" content="The loudest man on the internet. Every platform, one link.">
+<meta property="og:url" content="https://vapeamin.com">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://vapeamin.com/banner.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#14002e">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😱</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mr+Dafoe&family=Bebas+Neue&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#ff2ea6; --hotpink:#ff5fd0; --cyan:#33e6e0; --orange:#ff9a3d;
+    --deep:#14002e; --plum:#2a0a4e; --ink:#0b0020;
+    --glass:rgba(255,255,255,.07); --glass-line:rgba(255,255,255,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Archivo",system-ui,sans-serif;
+    color:#fff; background:var(--deep);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- SCENE ---------- */
+  .scene{position:fixed;inset:0;overflow:hidden;z-index:0}
+  .layer{position:absolute;inset:0;will-change:transform}
+
+  .sky{
+    background:linear-gradient(180deg,
+      #1b0342 0%, #4b0a63 26%, #a1156d 48%, #ff4d6d 66%, #ff9a3d 78%, #ffd166 88%);
+    background-size:100% 130%;
+    animation:skyShift 24s ease-in-out infinite alternate;
+  }
+  @keyframes skyShift{from{background-position:50% 0%}to{background-position:50% 22%}}
+
+  .sun{
+    position:absolute;left:50%;bottom:24%;
+    width:min(56vmin,470px);height:min(56vmin,470px);
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:linear-gradient(180deg,#ffe98a 0%,#ffb457 34%,#ff5fa2 70%,#ff2ea6 100%);
+    -webkit-mask-image:repeating-linear-gradient(180deg,#000 0 14px,transparent 14px 17px),linear-gradient(#000,#000);
+    -webkit-mask-composite:source-in;
+    mask-image:repeating-linear-gradient(180deg,#000 0 14px,transparent 14px 17px);
+    filter:drop-shadow(0 0 60px rgba(255,94,166,.75)) drop-shadow(0 0 140px rgba(255,154,61,.5));
+    animation:sunBreathe 9s ease-in-out infinite alternate;
+  }
+  @keyframes sunBreathe{from{filter:drop-shadow(0 0 50px rgba(255,94,166,.65)) drop-shadow(0 0 120px rgba(255,154,61,.4))}
+                        to{filter:drop-shadow(0 0 80px rgba(255,94,166,.9)) drop-shadow(0 0 180px rgba(255,154,61,.6))}}
+
+  .skyline{position:absolute;top:auto;left:0;right:0;bottom:24%;height:34vh;pointer-events:none}
+  .skyline svg{position:absolute;bottom:0;width:100%;height:100%;display:block}
+
+  /* water */
+  .water{
+    position:absolute;top:auto;left:0;right:0;bottom:0;height:24%;
+    background:linear-gradient(180deg,#5e1160 0%,#31084e 45%,#180337 100%);
+  }
+  .water::before{ /* sun reflection column */
+    content:"";position:absolute;left:50%;top:0;bottom:0;
+    width:min(40vmin,340px);transform:translateX(-50%);
+    background:repeating-linear-gradient(180deg,
+      rgba(255,209,102,.55) 0 3px, transparent 3px 9px,
+      rgba(255,46,166,.4) 9px 12px, transparent 12px 22px);
+    filter:blur(1px);
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 95%);
+    mask-image:linear-gradient(180deg,#000 0%,transparent 95%);
+    animation:shimmer 3.5s linear infinite;
+    opacity:.85;
+  }
+  .water::after{ /* broad shimmer */
+    content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(180deg,
+      rgba(255,255,255,.05) 0 2px, transparent 2px 11px);
+    animation:shimmer 6s linear infinite;
+  }
+  @keyframes shimmer{from{background-position:0 0}to{background-position:0 44px}}
+
+  /* palms */
+  .palms svg{position:absolute;bottom:-2vh;height:66vh;width:auto;fill:#160231;opacity:.95}
+  .palm-l{left:-9vw;transform-origin:50% 100%;animation:sway 8s ease-in-out infinite alternate}
+  .palm-r{right:-9vw;transform:scaleX(-1);transform-origin:50% 100%;animation:swayR 9.5s ease-in-out infinite alternate}
+  @keyframes sway{from{transform:rotate(-1.2deg)}to{transform:rotate(1.2deg)}}
+  @keyframes swayR{from{transform:scaleX(-1) rotate(-1.4deg)}to{transform:scaleX(-1) rotate(1.1deg)}}
+
+  /* atmosphere overlays */
+  .scanlines{
+    position:fixed;inset:0;z-index:3;pointer-events:none;
+    background:repeating-linear-gradient(180deg,rgba(0,0,0,.14) 0 1px,transparent 1px 4px);
+    mix-blend-mode:multiply;opacity:.5;
+  }
+  .vignette{
+    position:fixed;inset:0;z-index:3;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(6,0,20,.55) 100%);
+  }
+  .grain{
+    position:fixed;inset:-50%;z-index:3;pointer-events:none;opacity:.07;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 1.2s steps(4) infinite;
+  }
+  @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-2%,3%)}50%{transform:translate(3%,-2%)}75%{transform:translate(-3%,-3%)}100%{transform:translate(2%,2%)}}
+
+  /* ---------- CONTENT ---------- */
+  main{
+    position:relative;z-index:2;
+    min-height:100svh;
+    display:flex;flex-direction:column;align-items:center;
+    gap:12px;
+    padding:clamp(20px,4vh,44px) 20px calc(28px + env(safe-area-inset-bottom));
+    text-align:center;
+  }
+
+  /* center when there's room, scroll from the top when there isn't */
+  main > :first-child{margin-top:auto}
+  main > :last-child{margin-bottom:auto}
+
+  .avatar{
+    width:106px;height:106px;border-radius:50%;
+    padding:4px;
+    background:conic-gradient(from 210deg,var(--pink),var(--orange),var(--cyan),var(--pink));
+    box-shadow:0 0 34px rgba(255,46,166,.55), 0 0 80px rgba(51,230,224,.25);
+    animation:pop .7s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .avatar-inner{
+    width:100%;height:100%;border-radius:50%;overflow:hidden;
+    background:linear-gradient(160deg,#3b0d63,#180337);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .avatar-inner img{width:100%;height:100%;object-fit:cover;display:block}
+  .avatar-fallback{
+    font-family:"Mr Dafoe",cursive;font-size:64px;line-height:1;
+    background:linear-gradient(180deg,var(--hotpink),var(--cyan));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    transform:translateY(6px) rotate(-6deg);
+  }
+
+  h1.logo{
+    font-family:"Mr Dafoe",cursive;font-weight:400;
+    font-size:clamp(60px,13vw,116px);
+    line-height:1.05;
+    transform:rotate(-3.5deg);
+    background:linear-gradient(178deg,#fff 4%,var(--hotpink) 34%,var(--pink) 52%,var(--cyan) 92%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:
+      drop-shadow(0 3px 0 rgba(20,0,46,.9))
+      drop-shadow(0 8px 22px rgba(255,46,166,.45))
+      drop-shadow(0 0 46px rgba(51,230,224,.28));
+    animation:pop .8s .08s cubic-bezier(.2,1.4,.4,1) both;
+    padding:0 .18em .12em;
+  }
+
+  .tagline{
+    font-family:"Bebas Neue",sans-serif;
+    font-size:clamp(17px,3.4vw,24px);
+    letter-spacing:.32em;text-indent:.32em;
+    color:#ffe6f6;
+    text-shadow:0 0 18px rgba(255,46,166,.8);
+    animation:pop .8s .16s cubic-bezier(.2,1.4,.4,1) both;
+  }
+
+  .live{
+    display:inline-flex;align-items:center;gap:9px;
+    font-size:12px;font-weight:700;letter-spacing:.22em;text-indent:.22em;
+    color:#c9fffb;
+    border:1px solid rgba(51,230,224,.4);
+    background:rgba(20,0,46,.45);backdrop-filter:blur(6px);
+    padding:8px 16px;border-radius:999px;
+    animation:pop .8s .22s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .live .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--cyan);
+    box-shadow:0 0 10px var(--cyan);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+
+  nav{
+    width:min(440px,100%);
+    display:flex;flex-direction:column;gap:10px;
+    margin-top:8px;
+  }
+  .link{
+    --brand:#fff;
+    display:flex;align-items:center;gap:14px;
+    padding:13px 17px;border-radius:16px;
+    background:var(--glass);
+    border:1px solid var(--glass-line);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    text-decoration:none;color:#fff;
+    transition:transform .18s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease;
+    animation:rise .6s cubic-bezier(.2,1,.4,1) both;
+  }
+  nav .link:nth-child(1){animation-delay:.26s}
+  nav .link:nth-child(2){animation-delay:.32s}
+  nav .link:nth-child(3){animation-delay:.38s}
+  nav .link:nth-child(4){animation-delay:.44s}
+  nav .link:nth-child(5){animation-delay:.50s}
+  .link:hover,.link:focus-visible{
+    transform:translateY(-3px) scale(1.015);
+    border-color:var(--brand);
+    background:rgba(255,255,255,.11);
+    box-shadow:0 6px 30px -6px var(--brand), 0 0 0 1px var(--brand) inset;
+    outline:none;
+  }
+  .link:active{transform:translateY(-1px) scale(.99)}
+  .icon{
+    flex:0 0 auto;width:42px;height:42px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.09);
+    color:#fff;
+    transition:background .25s ease,color .25s ease;
+  }
+  .link:hover .icon{background:var(--brand);color:#fff}
+  .link[data-dark-icon]:hover .icon{color:#000}
+  .icon svg{width:22px;height:22px;fill:currentColor}
+  .meta{flex:1;text-align:left;line-height:1.25}
+  .meta b{font-size:16px;font-weight:700;letter-spacing:.02em;display:block}
+  .meta span{font-size:12.5px;color:rgba(255,255,255,.55)}
+  .chev{color:rgba(255,255,255,.4);font-family:"Bebas Neue",sans-serif;font-size:20px;transition:transform .2s ease,color .2s ease}
+  .link:hover .chev{transform:translateX(4px);color:#fff}
+
+  footer{
+    margin-top:18px;
+    font-size:11.5px;letter-spacing:.18em;text-indent:.18em;
+    color:rgba(255,255,255,.45);
+    text-transform:uppercase;
+    animation:rise .6s .58s both;
+  }
+
+  @keyframes pop{from{opacity:0;transform:scale(.86) translateY(10px)}to{opacity:1}}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  h1.logo{animation-name:popLogo}
+  @keyframes popLogo{from{opacity:0;transform:rotate(-3.5deg) scale(.86) translateY(10px)}to{opacity:1;transform:rotate(-3.5deg)}}
+
+  @media (max-width:600px){
+    .palms svg{height:44vh}
+    .palm-l{left:-22vw}.palm-r{right:-22vw}
+    .sun{bottom:30%}
+    .skyline{bottom:30%;height:26vh}
+    .water{height:30%}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none !important;transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<div class="scene" aria-hidden="true">
+  <div class="layer sky"></div>
+  <div class="layer" data-parallax="14"><div class="sun"></div></div>
+  <div class="layer skyline" data-parallax="26">
+    <svg viewBox="0 0 1440 340" preserveAspectRatio="xMidYMax slice">
+      <g fill="#2a0a4e" opacity=".8">
+        <rect x="30" y="150" width="70" height="190"/><rect x="120" y="200" width="52" height="140"/>
+        <rect x="196" y="120" width="64" height="220"/><rect x="284" y="230" width="90" height="110"/>
+        <rect x="1060" y="140" width="66" height="200"/><rect x="1150" y="190" width="54" height="150"/>
+        <rect x="1230" y="100" width="72" height="240"/><rect x="1330" y="210" width="80" height="130"/>
+      </g>
+      <g fill="#1c0540">
+        <rect x="0" y="240" width="120" height="100"/><rect x="150" y="180" width="58" height="160"/>
+        <rect x="230" y="210" width="80" height="130"/><rect x="330" y="160" width="50" height="180"/>
+        <rect x="400" y="250" width="110" height="90"/>
+        <rect x="960" y="220" width="90" height="120"/><rect x="1080" y="170" width="56" height="170"/>
+        <rect x="1160" y="230" width="86" height="110"/><rect x="1270" y="150" width="60" height="190"/>
+        <rect x="1350" y="240" width="90" height="100"/>
+      </g>
+      <g>
+        <rect x="160" y="196" width="6" height="9" fill="#33e6e0"/><rect x="178" y="220" width="6" height="9" fill="#ff5fd0"/>
+        <rect x="206" y="140" width="6" height="9" fill="#ffd166"/><rect x="222" y="170" width="6" height="9" fill="#33e6e0"/>
+        <rect x="341" y="180" width="6" height="9" fill="#ff5fd0"/><rect x="355" y="210" width="6" height="9" fill="#ffd166"/>
+        <rect x="1092" y="190" width="6" height="9" fill="#33e6e0"/><rect x="1106" y="215" width="6" height="9" fill="#ffd166"/>
+        <rect x="1281" y="170" width="6" height="9" fill="#ff5fd0"/><rect x="1297" y="200" width="6" height="9" fill="#33e6e0"/>
+      </g>
+    </svg>
+  </div>
+  <div class="layer water"></div>
+  <div class="layer palms" data-parallax="40">
+    <svg class="palm-l" viewBox="0 0 300 520">
+      <path d="M148 520c-6-120-4-220 14-300l14 4c-22 82-22 178-14 296z"/>
+      <path d="M170 224c-46-44-108-52-158-30 58-10 112 8 152 46z"/>
+      <path d="M168 220c-64-18-124 6-156 48 48-32 104-40 154-30z"/>
+      <path d="M172 216c-18-60-70-96-128-100 52 16 94 52 112 106z"/>
+      <path d="M176 214c8-62-24-118-76-146 38 38 60 88 58 148z"/>
+      <path d="M178 218c40-48 102-64 156-48-56 2-108 26-142 62z"/>
+      <path d="M180 222c56-26 118-16 160 22-50-24-106-28-154-6z"/>
+      <path d="M174 208c30-52 88-80 144-74-54 12-100 44-126 90z"/>
+    </svg>
+    <svg class="palm-r" viewBox="0 0 300 520">
+      <path d="M148 520c-6-120-4-220 14-300l14 4c-22 82-22 178-14 296z"/>
+      <path d="M170 224c-46-44-108-52-158-30 58-10 112 8 152 46z"/>
+      <path d="M168 220c-64-18-124 6-156 48 48-32 104-40 154-30z"/>
+      <path d="M172 216c-18-60-70-96-128-100 52 16 94 52 112 106z"/>
+      <path d="M176 214c8-62-24-118-76-146 38 38 60 88 58 148z"/>
+      <path d="M178 218c40-48 102-64 156-48-56 2-108 26-142 62z"/>
+      <path d="M180 222c56-26 118-16 160 22-50-24-106-28-154-6z"/>
+      <path d="M174 208c30-52 88-80 144-74-54 12-100 44-126 90z"/>
+    </svg>
+  </div>
+</div>
+
+<div class="scanlines" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<main>
+  <div class="avatar">
+    <div class="avatar-inner">
+      <img src="avatar.jpg" alt="Vapeamin" onerror="this.remove();document.querySelector('.avatar-fallback').style.display='block'">
+      <div class="avatar-fallback" style="display:none">V</div>
+    </div>
+  </div>
+
+  <h1 class="logo">Vapeamin</h1>
+  <p class="tagline">The Loudest Man on the Internet</p>
+  <p class="live"><span class="dot"></span> GOING LIVE FOR GTA&nbsp;VI</p>
+
+  <nav aria-label="Platforms">
+    <a class="link" style="--brand:#ff0033" href="https://youtube.com/@Vapeamin" target="_blank" rel="noopener">
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M23 7.6a3 3 0 0 0-2.1-2.2C19 4.9 12 4.9 12 4.9s-7 0-8.9.5A3 3 0 0 0 1 7.6 32 32 0 0 0 .6 12 32 32 0 0 0 1 16.4a3 3 0 0 0 2.1 2.1c1.9.6 8.9.6 8.9.6s7 0 8.9-.6a3 3 0 0 0 2.1-2.1A32 32 0 0 0 23.4 12 32 32 0 0 0 23 7.6zM9.8 15.3V8.7l5.8 3.3z"/></svg></span>
+      <span class="meta"><b>YouTube</b><span>@Vapeamin — full reactions &amp; VODs</span></span>
+      <span class="chev">&gt;</span>
+    </a>
+    <a class="link" style="--brand:#9146ff" href="https://twitch.tv/Vapeamin" target="_blank" rel="noopener">
+      <span class="icon"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4.3 2 2.5 5.6v14.6h5V23h2.8l2.7-2.8h4.1L22.5 15V2H4.3zm16.2 12.1-3.1 3.2h-5l-2.7 2.7v-2.7H5.5V4h15v10.1zM17.6 6.7h-2v5.5h2V6.7zm-5.4 0h-2v5.5h2V6.7z"/></svg></span>
+      <span class="meta"><b>Twitch</b><span>@Vapeamin — live main stage</span></span>
+      <span class="chev">&gt;</span>
+    </a>
+    <a class="link" style="--brand:#ff3b5c" href="https://tiktok.com/@Vapeamin" target="_blank" rel="noopener">
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M16.9 2h-3.4v13.6a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9.3a6.4 6.4 0 0 0-.9-.1 6.3 6.3 0 1 0 6.3 6.3V8.6a8 8 0 0 0 4.5 1.4V6.6A4.6 4.6 0 0 1 16.9 2z"/></svg></span>
+      <span class="meta"><b>TikTok</b><span>@Vapeamin — clips that got out of hand</span></span>
+      <span class="chev">&gt;</span>
+    </a>
+    <a class="link" data-dark-icon style="--brand:#53fc18" href="https://kick.com/Vapeamin" target="_blank" rel="noopener">
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M4 2h6v6h2V6h2V4h2V2h4v6h-2v2h-2v2h2v2h2v6h-4v-2h-2v-2h-2v2h-2v2H4z"/></svg></span>
+      <span class="meta"><b>Kick</b><span>@Vapeamin — no brakes edition</span></span>
+      <span class="chev">&gt;</span>
+    </a>
+    <a class="link" data-dark-icon style="--brand:#e7e9ea" href="https://x.com/Vapeamin" target="_blank" rel="noopener">
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M17.9 2.2h3.4l-7.4 8.5 8.7 11.1h-6.8l-5.3-6.7-6.1 6.7H.9l7.9-8.7L.4 2.2h7l4.8 6.1 5.7-6.1zm-1.2 17.6h1.9L6.4 4.1h-2l12.3 15.7z"/></svg></span>
+      <span class="meta"><b>X</b><span>@Vapeamin — takes nobody asked for</span></span>
+      <span class="chev">&gt;</span>
+    </a>
+  </nav>
+
+  <footer>© 2026 Vapeamin · All noise reserved</footer>
+</main>
+
+<script>
+  // Subtle mouse parallax on the scene layers
+  (function(){
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var layers = document.querySelectorAll('[data-parallax]');
+    var tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
+    addEventListener('pointermove', function(e){
+      tx = (e.clientX / innerWidth - .5);
+      ty = (e.clientY / innerHeight - .5);
+      if (!raf) raf = requestAnimationFrame(step);
+    }, {passive:true});
+    function step(){
+      cx += (tx - cx) * .06;
+      cy += (ty - cy) * .06;
+      layers.forEach(function(el){
+        var d = +el.dataset.parallax;
+        el.style.transform = 'translate(' + (-cx * d) + 'px,' + (-cy * d * .5) + 'px)';
+      });
+      raf = (Math.abs(tx-cx) > .001 || Math.abs(ty-cy) > .001) ? requestAnimationFrame(step) : null;
+    }
+  })();
+</script>
+</body>
+</html>
