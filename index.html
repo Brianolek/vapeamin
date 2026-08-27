@@ -357,6 +357,23 @@
 </main>
 
 <script>
+  // Traffic beacon: one view ping per visit + a ping per platform click.
+  // No cookies; the stats server hashes IPs with a daily salt.
+  (function(){
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return;
+    var S = 'https://vapeamin-stats-production.up.railway.app/hit.gif';
+    function ping(e){ new Image().src = S + '?e=' + e + '&r=' + encodeURIComponent(document.referrer || '') + '&_=' + Date.now(); }
+    ping('view');
+    var map = {YouTube:'yt', Twitch:'tw', TikTok:'tt', Kick:'kick', X:'x'};
+    document.querySelectorAll('nav .link').forEach(function(a){
+      a.addEventListener('click', function(){
+        var e = map[(a.querySelector('.meta b') || {}).textContent?.trim()];
+        if (!e) return;
+        if (navigator.sendBeacon) navigator.sendBeacon(S + '?e=' + e); else ping(e);
+      });
+    });
+  })();
+
   // Subtle mouse parallax on the scene layers
   (function(){
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
